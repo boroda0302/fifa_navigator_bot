@@ -20,7 +20,7 @@ with open("data/challenges.json", "r", encoding="utf-8") as f:
 
 # Главное меню
 main_kb = ReplyKeyboardMarkup(resize_keyboard=True)
-KeyboardButton("🌐 Mini App", web_app=WebAppInfo(url="https://your-hosted-mini-app.com"))
+KeyboardButton("🌐 Mini App", web_app=WebAppInfo(url=https://fifa-navigator-bot.onrender.com/))
 main_kb.add(KeyboardButton("🎲 Случайный старт"), KeyboardButton("🔥 Челлендж дня"))
 main_kb.add(KeyboardButton("📜 История успеха"), KeyboardButton("🧠 AI Навигатор (в разработке)"))
 
