@@ -6,7 +6,7 @@ import asyncio
 import json
 import random
 
-API_TOKEN = "YOUR_BOT_TOKEN_HERE"
+API_TOKEN = "8087703446:AAEyCvWvjRAkwUhEgAB2YmqDaeajS3KAKBg"
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
