@@ -24,6 +24,57 @@ KeyboardButton("🌐 Mini App", web_app=WebAppInfo(url="https://your-hosted-mini
 main_kb.add(KeyboardButton("🎲 Случайный старт"), KeyboardButton("🔥 Челлендж дня"))
 main_kb.add(KeyboardButton("📜 История успеха"), KeyboardButton("🧠 AI Навигатор (в разработке)"))
 
+@dp.message_handler(content_types=["web_app_data"])
+async def handle_web_app(message: types.Message):
+    data = json.loads(message.web_app_data.data)
+    position = data["position"]
+    style = data["style"]
+    level = data["level"]
+    clubs = recommend_clubs(player_position=position, style=style, level=level)
+    if not clubs:
+        await message.answer("❌ Не удалось найти клуб. Попробуй снова.")
+        return
+    club = random.choice(clubs)
+    response = (
+        f"🎯 Карьера по твоим параметрам:\n"
+        f"🏟️ {club['name']} ({club['league']})\n"
+        f"🧠 Стиль: {club['style']}\n"
+        f"💰 Бюджет: {club['budget']}$"
+    )
+    await message.answer(response)
+
+def recommend_clubs(player_position=None, style=None, level=None):
+    from data import fifa_clubs  # если у тебя клубы в отдельном модуле
+    # или просто: clubs = загрузка из data/fifa_clubs.json
+
+    with open("data/fifa_clubs.json", "r", encoding="utf-8") as f:
+        clubs = json.load(f)
+
+    result = []
+    for club in clubs:
+        if style and club["style"] != style:
+            continue
+        if player_position and player_position not in club.get("needs", []):
+            continue
+        if level:
+            if level == "high" and club["budget"] < 50000000:
+                continue
+            if level == "mid" and not (10000000 <= club["budget"] <= 50000000):
+                continue
+            if level == "low" and club["budget"] > 10000000:
+                continue
+        result.append(club)
+    return result
+
+{
+  "name": "Arsenal",
+  "league": "Premier League",
+  "budget": 75000000,
+  "style": "possession",
+  "needs": ["ST", "CB"]
+}
+
+
 @dp.message_handler(commands=["start"])
 async def start(message: types.Message):
     await message.answer("Привет! Я — FIFA Карьерный Навигатор ⚽
