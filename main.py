@@ -1,35 +1,32 @@
 import os
-import json
-import random
 from aiogram import Bot, Dispatcher, types
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils import executor
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")  # Секретный токен из Render Environment
+# 🔐 Безопасно получаем токен из окружения
+BOT_TOKEN = os.getenv("8087703446:AAEyCvWvjRAkwUhEgAB2YmqDaeajS3KAKBg)
+
+OWNER_ID = 693452733 https://t.me/kny4zhestvo
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
 
-# Мини-клавиатура с кнопками
+# 🧭 Клавиатура
 kb = ReplyKeyboardMarkup(resize_keyboard=True)
-kb.add(KeyboardButton("🎮 Карьера игрока"))
-kb.add(KeyboardButton("🌐 Mini App", web_app=WebAppInfo(url="https://fifa-navigator-bot.onrender.com")))
+kb.add(KeyboardButton("⚽ Начать карьеру"))
 
 @dp.message_handler(commands=["start"])
 async def start(message: types.Message):
-    await message.answer("Привет! Выбери действие ниже 👇", reply_markup=kb)
+    if message.from_user.id != OWNER_ID:
+        await message.answer("❌ У тебя нет доступа к этому боту.")
+        return
 
-@dp.message_handler(lambda msg: msg.text == "🎮 Карьера игрока")
-async def player(message: types.Message):
-    positions = ["ST", "CM", "CB", "GK"]
-    clubs = ["Arsenal", "Barcelona", "Juventus", "Ajax"]
-    rating = random.randint(60, 80)
-    await message.answer(f"🧍 Позиция: {random.choice(positions)}\n🏟️ Клуб: {random.choice(clubs)}\n🔢 Рейтинг: {rating}")
+    await message.answer("Привет, хозяин! Выбери действие:", reply_markup=kb)
 
-@dp.message_handler(content_types=["web_app_data"])
-async def handle_web_app(message: types.Message):
-    data = json.loads(message.web_app_data.data)
-    await message.answer(f"✅ Mini App данные:\nПозиция: {data['position']}\nСтиль: {data['style']}\nУровень: {data['level']}")
+@dp.message_handler(lambda msg: msg.text == "⚽ Начать карьеру")
+async def generate_career(message: types.Message):
+    await message.answer("🎮 Ты начинаешь карьеру в клубе Arsenal с рейтингом 72.")
 
 if __name__ == "__main__":
+    print("✅ Бот запущен.")
     executor.start_polling(dp, skip_updates=True)
